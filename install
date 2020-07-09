@@ -1,0 +1,6 @@
+#!/bin/sh
+
+cargo build --release
+cp target/release/wi-fi /usr/local/bin
+chown root:wheel /usr/local/bin/wi-fi 
+chmod u+s /usr/local/bin/wi-fi
