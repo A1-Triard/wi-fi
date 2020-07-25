@@ -1,5 +1,5 @@
 #![deny(warnings)]
-use std::process::{Command, exit};
+use std::process::{Stdio, Command, exit};
 use std::fmt::{Display};
 use std::str::{self};
 use std::path::{PathBuf, Path};
@@ -26,15 +26,14 @@ fn execute<N: AsRef<str>>(max_retry_count: u32, name: impl FnOnce() -> N, comman
     -> Result<(), String> {
     
     let mut retry_count = 0;
-    let o = loop {
-        let o = command.output().display_err()?;
-        if o.status.success() { return Ok(()); }
-        if o.status.code() != Some(1) || retry_count == max_retry_count { break o; }
+    let status = loop {
+        let status = command.stdin(Stdio::null()).status().display_err()?;
+        if status.success() { return Ok(()); }
+        if status.code() != Some(1) || retry_count == max_retry_count { break status; }
         retry_count += 1;
         sleep(Duration::from_millis(1));
     };
-    let err = str::from_utf8(&o.stderr).display_err()?;
-    Err(format!("{} finished with non-zero {}\n{}", name().as_ref(), o.status, err))
+    Err(format!("{} finished with non-zero {}\n.", name().as_ref(), status))
 }
 
 fn run() -> Result<(), String> {
