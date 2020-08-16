@@ -1,5 +1,9 @@
 [package]
-name = "wi-fi"
-version = "0.1.0"
-authors = ["Warlock"]
 edition = "2018"
+name = "wi-fi"
+version = "0.1.1"
+authors = ["warlock <internalmike@gmail.com>"]
+description = "Wi-Fi manager for FreeBSD."
+categories = ["command-line-utilities"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/A1-Triard/wi-fi"
