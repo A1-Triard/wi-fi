@@ -67,6 +67,7 @@ fn run() -> Result<(), String> {
                 .arg("-c")
                 .arg(&config)
         )?;
+        #[cfg(not(target_os="linux"))]
         execute(10, || "dhclient -b wlan0", Command::new("/sbin/dhclient").arg("-b").arg("wlan0"))?;
     }
     Ok(())
