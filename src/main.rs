@@ -45,6 +45,7 @@ fn run() -> Result<(), String> {
             return Err(format!("Extra argument `{}`. Usage: wi-fi [WPA_SUPPLICANT_CONF]", extra_arg.to_string_lossy()));
         }
     }
+    #[cfg(not(target_os="linux"))]
     execute(0, || "ifconfig wlan0 down", Command::new("/sbin/ifconfig").arg("wlan0").arg("down"))?;
     if Path::new("/var/run/wpa_supplicant/wlan0").exists() {
         execute(
@@ -69,6 +70,12 @@ fn run() -> Result<(), String> {
         )?;
         #[cfg(not(target_os="linux"))]
         execute(10, || "dhclient -b wlan0", Command::new("/sbin/dhclient").arg("-b").arg("wlan0"))?;
+        #[cfg(target_os="linux")]
+        execute(
+            10,
+            || "wpa_cli -i wlan0 enable_network 0",
+            Command::new("/usr/sbin/wpa_cli").arg("-i").arg("wlan0").arg("enable_network").arg("0")
+        )?;
     }
     Ok(())
 }
