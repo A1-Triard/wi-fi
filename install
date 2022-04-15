@@ -1,6 +1,24 @@
 #!/bin/sh
 
+if [ -x /bin/uname ]; then
+    system="$(/bin/uname)"
+else
+    system="$(/usr/bin/uname)"
+fi
+
+case "$system" in
+Linux)
+    prefix=/usr/local
+    ;;
+FreeBSD)
+    prefix=/usr
+    ;;
+*)
+    echo "Unknown system: ${system}."
+    exit 1
+esac
+
 cargo build --release
-cp target/release/wi-fi /usr/local/bin
-chown root:wheel /usr/local/bin/wi-fi 
-chmod u+s /usr/local/bin/wi-fi
+cp target/release/wi-fi $prefix/bin
+chown root:wheel $prefix/bin/wi-fi
+chmod u+s $prefix/bin/wi-fi
