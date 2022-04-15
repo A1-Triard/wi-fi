@@ -8,10 +8,10 @@ fi
 
 case "$system" in
 Linux)
-    prefix=/usr/local
+    prefix=/usr
     ;;
 FreeBSD)
-    prefix=/usr
+    prefix=/usr/local
     ;;
 *)
     echo "Unknown system: ${system}."
