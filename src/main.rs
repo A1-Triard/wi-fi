@@ -47,12 +47,20 @@ fn run() -> Result<(), String> {
     }
     #[cfg(not(target_os="linux"))]
     execute(0, || "ifconfig wlan0 down", Command::new("/sbin/ifconfig").arg("wlan0").arg("down"))?;
-    if Path::new("/var/run/wpa_supplicant/wlan0").exists() {
+    while Path::new("/var/run/wpa_supplicant/wlan0").exists() {
+        #[cfg(not(target_os="linux"))]
         execute(
             0,
             || "wpa_cli -i wlan0 terminate",
             Command::new("/usr/sbin/wpa_cli").arg("-i").arg("wlan0").arg("terminate")
         )?;
+        #[cfg(target_os="linux")]
+        execute(
+            0,
+            || "pkill wpa_supplicant",
+            Command::new("/usr/bin/pkill").arg("wpa_supplicant")
+        )?;
+        sleep(Duration::from_millis(100));
     }
     if let Some(config) = config {
         let config = PathBuf::from(config);
