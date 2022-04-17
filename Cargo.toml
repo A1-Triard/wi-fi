@@ -9,7 +9,8 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/A1-Triard/wi-fi"
 
 [profile.release]
-panic="abort"
-opt-level="z"
-strip=true
-lto=true
+panic = "abort"
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
