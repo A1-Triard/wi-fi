@@ -50,7 +50,7 @@ if [ -z "$PSK" ]; then
 fi
 
 reconfigure || exit 1
-network=$(/usr/bin/wpa_cli -i wlan0 add_network)
+network=$(/usr/bin/wpa_cli -i "$WLAN" add_network)
 test $? -eq 0 || exit 1
 echo Network $network added.
 execute "SSID assigned." "Error: SSID assigning failed." $network set_network $network ssid \""$SSID"\" || exit 1
