@@ -1,17 +1,21 @@
 #!/bin/sh
-set -e
+set -eu
+
+echo__() {
+    printf "%s\n" "$1"
+}
 
 reconfigure() {
-    ok=$(/usr/bin/wpa_cli -i "$WLAN" reconfigure)
-    test $? -eq 0 || { echo Error: reconfiguring failed.; exit 1; }
-    test $ok = OK || { echo Error: reconfiguring failed.; exit 1; }
-    echo Reconfigured.
+    ok="$(/usr/bin/wpa_cli -i "$WLAN" reconfigure)"
+    test $? -eq 0 || { echo "Error: reconfiguring failed."; exit 1; }
+    test "$ok" = OK || { echo "Error: reconfiguring failed."; exit 1; }
+    echo "Reconfigured."
 }
 
 cleanup() {
-    ok=$(/usr/bin/wpa_cli -i "$WLAN" remove_network $1)
-    test $? -eq 0 || { echo Error: network $1 removing failed.; exit 1; }
-    test $ok = OK || { echo Error: network $1 removing failed.; exit 1; }
+    ok="$(/usr/bin/wpa_cli -i "$WLAN" -- remove_network "$1")"
+    test $? -eq 0 || { echo "Error: network $1 removing failed."; exit 1; }
+    test "$ok" = OK || { echo "Error: network $1 removing failed."; exit 1; }
 }
 
 execute() {
@@ -19,10 +23,10 @@ execute() {
     err_msg="$2"
     network="$3"
     shift 3
-    ok=$(/usr/bin/wpa_cli -i "$WLAN" "$@")
-    test $? -eq 0 || { echo "$err_msg"; cleanup $network; exit 1; }
-    test $ok = OK || { echo "$err_msg"; cleanup $network; exit 1; }
-    echo "$ok_msg"
+    ok="$(/usr/bin/wpa_cli -i "$WLAN" -- "$@")"
+    test $? -eq 0 || { echo__ "$err_msg"; cleanup "$network"; exit 1; }
+    test "$ok" = OK || { echo__ "$err_msg"; cleanup "$network"; exit 1; }
+    echo__ "$ok_msg"
 }
 
 if [ $# -ne 1 ]; then
@@ -30,7 +34,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-if [ \! -r $1 ]; then
+if ! [ -r "$1" ]; then
    echo "Cannot read $1."
    exit 1
 fi
@@ -38,7 +42,8 @@ fi
 WLAN=wlan0
 SSID=
 PSK=
-. $(/usr/bin/realpath $1)
+# shellcheck source=test_config
+. "$(/usr/bin/realpath "$1")"
 if [ -z "$SSID" ]; then
     echo "Config file does not set SSID variable."
     exit 1
@@ -50,9 +55,9 @@ if [ -z "$PSK" ]; then
 fi
 
 reconfigure || exit 1
-network=$(/usr/bin/wpa_cli -i "$WLAN" add_network)
+network="$(/usr/bin/wpa_cli -i "$WLAN" add_network)"
 test $? -eq 0 || exit 1
-echo Network $network added.
-execute "SSID assigned." "Error: SSID assigning failed." $network set_network $network ssid \""$SSID"\" || exit 1
-execute "PSK assigned." "Error: PSK assigning failed." $network set_network $network psk \""$PSK"\" || exit 1
-execute "Network enabled." "Error: network enabling failed." $network enable_network $network || exit 1
+echo "Network $network added."
+execute "SSID assigned." "Error: SSID assigning failed." "$network" set_network "$network" ssid '"'"$SSID"'"' || exit 1
+execute "PSK assigned." "Error: PSK assigning failed." "$network" set_network "$network" psk '"'"$PSK"'"' || exit 1
+execute "Network enabled." "Error: network enabling failed." "$network" enable_network "$network" || exit 1
