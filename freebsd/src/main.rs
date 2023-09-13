@@ -1,7 +1,6 @@
 #![deny(warnings)]
 
 use std::process::{Stdio, Command, exit};
-use std::fmt::{Display};
 use std::str::{self};
 use std::path::{PathBuf, Path};
 use std::thread::{sleep};
@@ -15,20 +14,10 @@ fn main() {
     }
 }
 
-trait ResultDisplayExt<T, E: Display>: Into<Result<T, E>> {
-    fn display_err(self) -> Result<T, String> {
-        self.into().map_err(|e| format!("{}", e))
-    }
-}
-
-impl<T, E: Display, R: Into<Result<T, E>>> ResultDisplayExt<T, E> for R { }
-
-fn execute<N: AsRef<str>>(max_retry_count: u32, name: impl FnOnce() -> N, command: &mut Command)
-    -> Result<(), String> {
-    
+fn execute<N: AsRef<str>>(max_retry_count: u32, name: impl FnOnce() -> N, command: &mut Command) -> Result<(), String> {
     let mut retry_count = 0;
     let status = loop {
-        let status = command.stdin(Stdio::null()).status().display_err()?;
+        let status = command.stdin(Stdio::null()).status().map_err(|e| e.to_string())?;
         if status.success() { return Ok(()); }
         if status.code() != Some(1) || retry_count == max_retry_count { break status; }
         retry_count += 1;

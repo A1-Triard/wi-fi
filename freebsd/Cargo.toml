@@ -1,7 +1,8 @@
 [package]
-edition = "2018"
+edition = "2021"
 name = "wi-fi"
-version = "0.1.1"
+version = "0.0.0"
+publish = false
 authors = ["warlock <internalmike@gmail.com>"]
 description = "Wi-Fi manager for FreeBSD."
 categories = ["command-line-utilities"]

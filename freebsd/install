@@ -1,11 +1,13 @@
 #!/bin/sh
+set -eu
 
-cargo +nightly build \
-    -Z build-std=std,panic_abort \
-    -Z build-std-features=panic_immediate_abort \
-    --target x86_64-unknown-freebsd \
-    --release
+cd "$(dirname "$(realpath "$0")")"
+
+./build_release
+
+triple="$(rustc -Vv | awk -F ': ' '{ if($1 == "host") print $2 }')"
+
 chown -R $USER target Cargo.lock
-cp target/x86_64-unknown-freebsd/release/wi-fi /usr/local/bin
+cp target/"$triple"/release/wi-fi /usr/local/bin
 chown root:wheel /usr/local/bin/wi-fi
 chmod u+s /usr/local/bin/wi-fi
