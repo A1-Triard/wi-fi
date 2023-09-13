@@ -3,5 +3,6 @@ set -eu
 
 cd "$(dirname "$(realpath "$0")")"
 
-cp wi-fi /usr/bin || exit 1
+cp wi-fi /usr/bin/wi-fi || exit 1
+cp wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf || exit 1
 chown root:root /usr/bin/wi-fi || exit 1
