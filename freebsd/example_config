@@ -1,0 +1,6 @@
+#!/usr/local/bin/wi-fi
+
+network={
+    ssid="my_wifi"
+    psk="my password"
+}

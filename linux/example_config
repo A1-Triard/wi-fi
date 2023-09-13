@@ -1,0 +1,4 @@
+#!/usr/bin/wi-fi
+
+SSID="my_wifi"
+PSK="my password"

@@ -1,7 +1,17 @@
 Installation
 ============
 
+FreeBSD:
+
 ```sh
+$ cd freebsd
+# ./install
+```
+
+Linux:
+
+```sh
+$ cd linux
 # ./install
 ```
 

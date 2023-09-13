@@ -42,7 +42,7 @@ fi
 WLAN=wlan0
 SSID=
 PSK=
-# shellcheck source=test_config
+# shellcheck source=example_config
 . "$(/usr/bin/realpath "$1")"
 if [ -z "$SSID" ]; then
     echo "Config file does not set SSID variable."
