@@ -1,5 +1,3 @@
-![travis](https://travis-ci.org/A1-Triard/wi-fi.svg?branch=master)
-
 Installation
 ============
 
